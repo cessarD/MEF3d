@@ -68,21 +68,108 @@ namespace Poliglot
            
             line = reader.ReadLine();
             
-
+         
+            Console.WriteLine("PRE NODE");
+      
             
             //seting nodes
             node[] n = m.getNodes();
             for (int i = 0; i < nnodes; i++) {
+                line = reader.ReadLine();
+                
+                line = line.Replace("           ","");
+                line = line.Replace("          ","");
+                line = line.Replace("         ","");
+                line = line.Replace("        ","");
+                line = line.Replace("       "," ");
+               
+                lines = line.Split(' ');
+    
                 node nnode = new node();
                 n[i] = nnode;
-                n[i].setValue((float)0.0);
+                n[i].setValues(int.Parse(lines[0].ToString()), float.Parse(lines[1].ToString()),float.Parse(lines[2].ToString()),float.Parse(lines[3].ToString()),0,0,0,0,0);
+
             }
-            //seting values
+            
+            line = reader.ReadLine();
+            line = reader.ReadLine();
+            line = reader.ReadLine();
+            Console.WriteLine("PRE Element");
+            //seting elements
+            element[] e = m.getElements();
+            for (int i = 0; i < neltos; i++) {
+                line = reader.ReadLine();
+                
+         
+               
+                lines = line.Split(' ');
+                Console.WriteLine(line);
+                element element = new element();
+                e[i] = element;
+                e[i].setValues(int.Parse(lines[0].ToString()) ,0,0,0,int.Parse(lines[1].ToString()),int.Parse(lines[2].ToString()),int.Parse(lines[3].ToString()),int.Parse(lines[4].ToString()),0);
+
+            }
+
+            Console.WriteLine(e.Length);
+            Console.WriteLine(e[0].getNode1());
+            Console.WriteLine(e[1].getNode1());
+            Console.WriteLine(e[2].getNode1());
+            Console.WriteLine(e[3].getNode1());
+            Console.WriteLine(e[4].getNode1());
+            Console.WriteLine(e[5].getNode1());
+            Console.WriteLine(e[6].getNode1());
+            line = reader.ReadLine();
+            line = reader.ReadLine();
+            line = reader.ReadLine();
+            Console.WriteLine("PRE DIR");
+            //seting elements
+            condition[] DIR = m.getDirichlet();
+            for (int i = 0; i < ndirich; i++) {
+                line = reader.ReadLine();
+
+                line = line.Replace("          ", "");
+                line = line.Replace("         ","");
+                line = line.Replace("        ","");
+                line = line.Replace("       "," ");
+
+             
+                lines = line.Split(' ');
+    
+                element element = new element();
+                e[i] = element;
+                e[i].setValues(int.Parse(lines[0].ToString()) ,0,0,0,0,0,0,0,int.Parse(lines[1].ToString()));
+
+            }
+            line = reader.ReadLine();
+            line = reader.ReadLine();
+            line = reader.ReadLine();
+            Console.WriteLine("PRE NEU");
+            //seting elements
+            condition[] NEU = m.getNeumann();
+            for (int i = 0; i < nneuman; i++) {
+                line = reader.ReadLine();
+                line = line.Replace("           ", "");
+                line = line.Replace("          ", "");
+                line = line.Replace("         ","");
+                line = line.Replace("        ","");
+                line = line.Replace("       "," ");
+
+         
+                lines = line.Split(' ');
+    
+                element element = new element();
+                e[i] = element;
+                e[i].setValues(int.Parse(lines[0].ToString()) ,0,0,0,0,0,0,0,int.Parse(lines[1].ToString()));
+
+            }
+            
+            /*seting values
+  
             line = reader.ReadLine();
             Console.WriteLine(line);
             //hace split cada 12 espacios, a pesar de usar \t
             lines = line.Split(' ');
-            Console.WriteLine(lines[12]);
+            Console.WriteLine(lines[12]);*/
 
 
 

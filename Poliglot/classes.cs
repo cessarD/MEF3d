@@ -1,5 +1,7 @@
 ﻿
 
+using System;
+
 namespace Poliglot
 
 {
@@ -222,6 +224,7 @@ namespace Poliglot
         }
         public unsafe element getElement(int i)
         {
+           
             return element_list[i];
         }
         public unsafe condition getCondition(int i, int type)
