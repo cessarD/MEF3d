@@ -22,7 +22,9 @@ namespace Poliglot
             }
         
         }
-        public void ReadMeshandConditions(ref mesh m, string filename)
+        
+        
+        public void ReadMeshandConditions( ref mesh m, string filename)
         {
             float k, q;
             int nnodes, neltos, ndirich, nneuman;
@@ -30,7 +32,7 @@ namespace Poliglot
             if (!File.Exists(filename))
             {
                 Console.WriteLine("El archivo no existe!");
-                return;
+                return ;
             }
 
             FileStream data = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -103,21 +105,14 @@ namespace Poliglot
          
                
                 lines = line.Split(' ');
-                Console.WriteLine(line);
+                
                 element element = new element();
                 e[i] = element;
                 e[i].setValues(int.Parse(lines[0].ToString()) ,0,0,0,int.Parse(lines[1].ToString()),int.Parse(lines[2].ToString()),int.Parse(lines[3].ToString()),int.Parse(lines[4].ToString()),0);
 
             }
-
-            Console.WriteLine(e.Length);
-            Console.WriteLine(e[0].getNode1());
-            Console.WriteLine(e[1].getNode1());
-            Console.WriteLine(e[2].getNode1());
-            Console.WriteLine(e[3].getNode1());
-            Console.WriteLine(e[4].getNode1());
-            Console.WriteLine(e[5].getNode1());
-            Console.WriteLine(e[6].getNode1());
+            
+        
             line = reader.ReadLine();
             line = reader.ReadLine();
             line = reader.ReadLine();
@@ -135,9 +130,9 @@ namespace Poliglot
              
                 lines = line.Split(' ');
     
-                element element = new element();
-                e[i] = element;
-                e[i].setValues(int.Parse(lines[0].ToString()) ,0,0,0,0,0,0,0,int.Parse(lines[1].ToString()));
+                condition element = new condition();
+                DIR[i] = element;
+                DIR[i].setValues(int.Parse(lines[0].ToString()) ,0,0,0,0,0,0,0,int.Parse(lines[1].ToString()));
 
             }
             line = reader.ReadLine();
@@ -157,9 +152,9 @@ namespace Poliglot
          
                 lines = line.Split(' ');
     
-                element element = new element();
-                e[i] = element;
-                e[i].setValues(int.Parse(lines[0].ToString()) ,0,0,0,0,0,0,0,int.Parse(lines[1].ToString()));
+                condition element = new condition();
+                NEU[i] = element;
+                NEU[i].setValues(int.Parse(lines[0].ToString()) ,0,0,0,0,0,0,0,int.Parse(lines[1].ToString()));
 
             }
             
@@ -181,7 +176,6 @@ namespace Poliglot
 
 
             //CorrectConditions(ndirich,  m.getDirichlet(), m.getDirichletIndices());
-
 
         }
     }

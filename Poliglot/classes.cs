@@ -227,9 +227,14 @@ namespace Poliglot
            
             return element_list[i];
         }
+        public  void setElements(element[] i)
+        {
+            element_list = i;
+
+        }
         public unsafe condition getCondition(int i, int type)
         {
-            if (type == int.Parse(Sizes.DIRICHLET.ToString())) return dirichlet_list[i];
+            if (type == 2) return dirichlet_list[i];
             else return neumann_list[i];
         }
     };

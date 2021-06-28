@@ -1,11 +1,12 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using System;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace Poliglot
 {
     public class math_tools
     {
 
-        public void zeroes(ref Matrix<float> M,int n){
+        public void zeroesm(ref Matrix<float> M,int n){
             for(int i=0;i<n;i++){
                 for(int j=0;j<n;j++){
 
@@ -27,7 +28,7 @@ namespace Poliglot
             }
         }
 
-        public void zeroes(ref Vector<float> v,int n){
+        public void zeroesv(ref Vector<float> v,int n){
             for(int i=0;i<n;i++){
                 v[i]=0;
             }
@@ -56,10 +57,24 @@ namespace Poliglot
             return R;
         }
         public void productRealMatrix(float real,Matrix<float> M,ref Matrix<float> R){
-            zeroes(ref R,M.RowCount);
+            zeroesm(ref R,M.RowCount);
             for(int i=0;i<M.RowCount;i++)
             for(int j=0;j<M.ColumnCount;j++)
                 R[i,j] = real*M[i,j];
         }
+        public void productMatrixVector(Matrix<float> A, Vector<float> v, ref Vector<float> R){
+            for(int f=0;f<A.ColumnCount;f++){
+                float cell = 0;
+                for(int c=0;c<v.Count;c++){
+                    cell += A[f,c]*v[c];
+                }
+                R[f] += cell;
+            }
+        }
+        
+      
+
+
+
     }
 }

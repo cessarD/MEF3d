@@ -9,9 +9,7 @@ namespace Poliglot
 
         public void crearSistemasLocales(ref mesh m,ref Matrix<float>[] localKs,ref Vector<float>[] localbs)
         {
-            Console.WriteLine("elementos");
-            element[] e = m.getElements();
-            Console.WriteLine(e[0].getNode1());
+           
              for(int i=0;i<m.getSize(1);i++)
              {
                
@@ -97,7 +95,7 @@ namespace Poliglot
             D = calculateLocalD(element,m);
             Ve = calculateLocalVolume(element,m);
 
-            mtools.zeroes(ref A,3);
+            mtools.zeroesm(ref A,3);
             mtools.zeroes(ref B,3,4);
             calculateLocalA(element,ref A,m);
             calculateB(ref B);
@@ -142,5 +140,160 @@ namespace Poliglot
             return J;
         }
         
+        public void ensamblaje(ref mesh m, ref Matrix<float>[] localKs, ref Vector<float>[] localbs,ref Matrix<float> K,ref Vector<float> b){
+            for(int i=0;i<m.getSize(1);i++){
+                element e = m.getElement(i);
+                assemblyK(e,  localKs[i],ref K);
+                assemblyb(e, localbs[i],ref b);
+            }
+        }
+        void assemblyK(element e, Matrix<float> localK,ref Matrix<float> K){
+            int index1 = e.getNode1() - 1;
+            int index2 = e.getNode2() - 1;
+            int index3 = e.getNode3() - 1;
+            int index4 = e.getNode4() - 1;
+
+            K[index1,index1] += localK[0,0];
+            K[index1,index2] += localK[0,1];
+            K[index1,index3] += localK[0,2];
+            K[index1,index4] += localK[0,3];
+           
+            K[index2,index1] += localK[1,0];
+            K[index2,index2] += localK[1,1];
+            K[index2,index3] += localK[1,2];
+            K[index2,index4] += localK[1,3];
+            
+            K[index3,index1] += localK[2,0];
+            K[index3,index2] += localK[2,1];
+            K[index3,index3] += localK[2,2];
+            K[index3,index4] += localK[2,3];
+    
+            K[index4,index1] += localK[3,0];
+            K[index4,index2] += localK[3,1];
+            K[index4,index3] += localK[3,2];
+            K[index4,index4] += localK[3,3];
+
+        }
+
+        void assemblyb(element e,Vector<float> localb,ref Vector<float> b){
+            int index1 = e.getNode1() - 1;
+            int index2 = e.getNode2() - 1;
+            int index3 = e.getNode3() - 1;
+            int index4 = e.getNode4() - 1;
+
+            b[index1] += localb[0];
+            b[index2] += localb[1];
+            b[index3] += localb[2];
+            b[index4] += localb[3];
+    
+        }
+        public void applyNeumann(ref mesh m,ref Vector<float> b){
+            for(int i=0;i<m.getSize(3);i++){
+                condition c = m.getCondition(i,3);
+                b[c.getNode1()-1] += c.getValue();
+            }
+        }
+        public void applyDirichlet(ref mesh m,ref Matrix<float> K,ref Vector<float> b){
+            for(int i=0;i<m.getSize(2);i++){
+                condition c = m.getCondition(i,2);
+                int index = c.getNode1()-1;
+                K=removerFila(K,index);
+                b=removerelemento(m,b,index);
+             
+
+                for(int row=0;row<K.RowCount;row++){
+                    float cell = K[row,index];
+             
+                    b[row] += -1*c.getValue()*cell;
+                }
+                K=removerColumna(K,index);
+            }
+        }
+        Vector<float> removerelemento(mesh m,Vector<float> b,int index){
+            Vector<float> a = null;
+
+            for(int i = 0; i<b.Count; i++){
+
+                if(i!=index){
+                    
+                    a.Add(b.At(i));
+                }
+            }
+
+            return a;
+        }
+
+        Matrix<float> removerColumna(Matrix<float> matriz, int columna) {
+            Matrix<float> nueva = null;
+            if (columna < 0 || columna >= matriz.ColumnCount) {
+                return matriz;
+            } else {
+                for (int l =0; l < nueva.RowCount; l++) {
+
+                    int b=0;
+
+                    for (int j = 0; j < nueva.ColumnCount; j++) {
+                        if(columna==b){
+                            b++;
+                        }
+
+                        nueva[l,j]=matriz[l,b];
+                        b++;
+
+
+
+                    }
+
+
+                }
+
+            }
+            return nueva;
+        }
+        Matrix<float> removerFila(Matrix<float> matriz, int fila) {
+            if (fila < 0 || fila >= matriz.RowCount) {
+                return matriz;
+            } else
+            {
+                Matrix<float> nueva = null;
+
+                int b=0;
+                for (int l =0; l < matriz.RowCount-1; l++) {
+
+                    if((fila)==b){
+                        b++;
+                    }
+
+
+                    for (int j = 0; j < matriz.ColumnCount; j++) {
+
+
+                        nueva[l,j]=matriz[b,j];
+
+
+                    }
+                    b++;
+
+                }
+
+                return nueva;
+            }
+        }
+        
+        
+        public void calculate(ref Matrix<float> K, ref Vector<float> b, ref Vector<float> T)
+        {
+            math_tools mtools= new math_tools();
+            Console.WriteLine("Iniciando calculo de respuesta...");
+           
+            Matrix<float> Kinv = null;
+            Console.WriteLine("Calculo de inversa...");
+
+            Kinv = K.Inverse();
+            Console.WriteLine("Calculo de respuesta...");
+           
+            mtools.productMatrixVector(Kinv,b,ref T);
+        }
+
     }
 }
