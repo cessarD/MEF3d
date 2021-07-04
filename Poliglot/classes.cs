@@ -149,6 +149,7 @@ namespace Poliglot
 
         public void setValues(int a, float b, float c, float d, int e, int f, int g, int h, float i)
         {
+         
             node1 = e;
             value = i;
         }

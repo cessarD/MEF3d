@@ -13,13 +13,13 @@ namespace Poliglot
              for(int i=0;i<m.getSize(1)-1;i++)
              {
                
-                    localKs[i]=createLocalK(i,ref m);
+                   localKs[i]=createLocalK(i,ref m);
                   localbs[i]=createLocalb(i,ref m);
              }
         }
         float calculateLocalD(int ind,mesh m){
             float D,a,b,c,d,e,f,g,h,i;
-            Console.WriteLine(ind);
+
             element el = m.getElement(ind+1);
 
             node n1 = m.getNode(el.getNode1()-1);
@@ -93,7 +93,7 @@ namespace Poliglot
             Matrix<float> K = null,Bt = null,At = null;
             var A=Matrix<float>.Build.Dense(3,3,0);
             var B=Matrix<float>.Build.Dense(3,4,0);
-            D = calculateLocalD(element,m);
+           D = calculateLocalD(element,m);
             Ve = calculateLocalVolume(element,m);
 
            
@@ -155,7 +155,7 @@ namespace Poliglot
             int index2 = e.getNode2() - 1;
             int index3 = e.getNode3() - 1;
             int index4 = e.getNode4() - 1;
-            Console.WriteLine(index1+" "+ index2 + " "+ index3 + " "+ index4);
+     
             K[index1,index1] += localK[0,0];
             K[index1,index2] += localK[0,1];
             K[index1,index3] += localK[0,2];
@@ -191,8 +191,9 @@ namespace Poliglot
     
         }
         public void applyNeumann(ref mesh m,ref Vector<float> b){
-            for(int i=0;i<m.getSize(3)-1;i++){
+            for(int i=0;i<m.getSize(3);i++){
                 condition c = m.getCondition(i,3);
+              
                 b[c.getNode1()-1] += c.getValue();
             }
         }
@@ -200,8 +201,9 @@ namespace Poliglot
             for(int i=0;i<m.getSize(2);i++){
                 condition c = m.getCondition(i,2);
                 int index = c.getNode1()-1;
-                K=removerFila(K,index);
-                b=removerelemento(m,b,index);
+                K.RemoveRow(index);
+              // K=removerFila(K,index);
+              b=removerelemento(m,b,index);
              
 
                 for(int row=0;row<K.RowCount;row++){
@@ -209,11 +211,12 @@ namespace Poliglot
              
                     b[row] += -1*c.getValue()*cell;
                 }
-                K=removerColumna(K,index);
+                K.RemoveColumn(index);
+             //   K=removerColumna(K,index);
             }
         }
         Vector<float> removerelemento(mesh m,Vector<float> b,int index){
-            Vector<float> a = null;
+            Vector<float> a = Vector<float>.Build.Dense(b.Count,0);
 
             for(int i = 0; i<b.Count; i++){
 

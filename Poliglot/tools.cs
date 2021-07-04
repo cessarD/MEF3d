@@ -132,7 +132,8 @@ namespace Poliglot
     
                 condition element = new condition();
                 DIR[i] = element;
-                DIR[i].setValues(int.Parse(lines[0].ToString()) ,0,0,0,0,0,0,0,int.Parse(lines[1].ToString()));
+        
+                DIR[i].setValues(0 ,0,0,0,int.Parse(lines[0].ToString()),0,0,0,int.Parse(lines[1].ToString()));
 
             }
             line = reader.ReadLine();
@@ -154,7 +155,7 @@ namespace Poliglot
     
                 condition element = new condition();
                 NEU[i] = element;
-                NEU[i].setValues(int.Parse(lines[0].ToString()) ,0,0,0,0,0,0,0,int.Parse(lines[1].ToString()));
+                NEU[i].setValues(0,0,0,0,int.Parse(lines[0].ToString()) ,0,0,0,int.Parse(lines[1].ToString()));
 
             }
             
