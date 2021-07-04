@@ -88,14 +88,34 @@ namespace Poliglot
             B[2,0] = -1; B[2,1] = 0; B[2,2] = 0; B[2,3] = 1;
         }
 
-        void calculateU(int i,mesh m,int j)
+        void calculateU(int i,mesh m,int j, ref Matrix<float> U)
         {
             element e = m.getElement(i);
             node n1 = m.getNode(e.getNode1()-1);
             node n2 = m.getNode(e.getNode2()-1);
             node n3 = m.getNode(e.getNode3()-1);
             node n4 = m.getNode(e.getNode4()-1);
+
             
+        }
+
+        float calculatec1(element n, mesh m)
+        {
+            node n1 = m.getNode(n.getNode1() - 1);
+            node n2 = m.getNode(n.getNode2() - 1);
+            node n3 = m.getNode(n.getNode3() - 1);
+            node n4 = m.getNode(n.getNode4() - 1);
+
+            return (float)Math.Pow(n2.getX() - n1.getX(), 2); ;
+        }
+        float calculatec2(element n, mesh m)
+        {
+            node n1 = m.getNode(n.getNode1() - 1);
+            node n2 = m.getNode(n.getNode2() - 1);
+            node n3 = m.getNode(n.getNode3() - 1);
+            node n4 = m.getNode(n.getNode4() - 1);
+            //seria X8 pero no se de donde sale
+            return (1 / n2.getX() - n1.getX()) * ((4 * n1.getX()) + (4 * n2.getX()) - (8 * n3.getX()));
         }
         Matrix<float> createLocalK(int element,ref mesh m){
             // K = (k*Ve/D^2)Bt*At*A*B := K_4x4
@@ -104,6 +124,10 @@ namespace Poliglot
               Matrix<float> K = null,Bt = null,At = null;
              var A=Matrix<float>.Build.Dense(3,3,0);
               var B=Matrix<float>.Build.Dense(3,4,0);
+            Matrix<float> u = null;
+
+            //new matrix<matrix data>
+           
              D = calculateLocalD(element,m);
               Ve = calculateLocalVolume(element,m);
              
@@ -155,15 +179,16 @@ namespace Poliglot
             return J;
         }
         
-        public void ensamblaje(ref mesh m, ref Matrix<float>[] localKs, ref Vector<float>[] localbs,ref Matrix<float> K,ref Vector<float> b){
+        public void ensamblaje(ref mesh m, ref Matrix<float>[] localKs, ref Vector<float>[] localbs,ref Matrix<float> K,ref Vector<float> b, ref Matrix<float> U){
             for(int i=0;i<m.getSize(1)-1;i++){
                 element e = m.getElement(i);
-               assemblyK(e,  localKs[i],ref K);
+                assemblyK(e,  localKs[i],ref K, ref U);
                 assemblyb(e, localbs[i],ref b);
             }
      
         }
-        void assemblyK(element e, Matrix<float> localK,ref Matrix<float> K){
+        void assemblyK(element e, Matrix<float> localK,ref Matrix<float> K, ref Matrix<float> U)
+        {
             int index1 = e.getNode1() - 1;
             int index2 = e.getNode2() - 1;
             int index3 = e.getNode3() - 1;
@@ -188,6 +213,35 @@ namespace Poliglot
             K[index4,index2] += localK[3,1];
             K[index4,index3] += localK[3,2];
             K[index4,index4] += localK[3,3];
+
+            //mult
+            Matrix<float> mult = Matrix<float>.Build.Dense(3, 3, 0);
+            Console.WriteLine("el mult");
+            mult[0, 0] = U.Determinant();
+            mult[1, 1] = U.Determinant();
+            mult[2, 2] = U.Determinant();
+
+
+            Console.WriteLine(mult);
+
+            for (int j = 0; j < U.RowCount; j++)
+            {
+                for (int l = 0; l <U.ColumnCount; l++)
+                {
+
+                    Console.Write(U[j, l] + " ");
+
+
+
+
+                }
+
+                Console.WriteLine();
+
+
+
+
+            }
 
         }
 
