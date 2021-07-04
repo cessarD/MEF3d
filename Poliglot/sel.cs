@@ -1,5 +1,6 @@
 ﻿using System;
 using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Complex;
 
 namespace Poliglot
 {
@@ -52,13 +53,13 @@ namespace Poliglot
             node n2 = m.getNode(el.getNode2()-1);
             node n3 = m.getNode(el.getNode3()-1);
             node n4 = m.getNode(el.getNode4()-1);
-
+      
             a = n2.getX()-n1.getX();b = n2.getY()-n1.getY();c = n2.getZ()-n1.getZ();
             d = n3.getX()-n1.getX();e = n3.getY()-n1.getY();f = n3.getZ()-n1.getZ();
             g = n4.getX()-n1.getX();h = n4.getY()-n1.getY();i = n4.getZ()-n1.getZ();
             //Para el determinante se usa la Regla de Sarrus.
-            V = (1/6)*(a*e*i+d*h*c+g*b*f-g*e*c-a*h*f-d*b*i);
-
+            V = (a*e*i+d*h*c+g*b*f-g*e*c-a*h*f-d*b*i)/6;
+       
             return V;
         }
         float ab_ij(float ai, float aj, float a1, float bi, float bj, float b1){
@@ -86,27 +87,38 @@ namespace Poliglot
             B[1,0] = -1; B[1,1] = 0; B[1,2] = 1; B[1,3] = 0;
             B[2,0] = -1; B[2,1] = 0; B[2,2] = 0; B[2,3] = 1;
         }
+
+        void calculateU(int i,mesh m,int j)
+        {
+            element e = m.getElement(i);
+            node n1 = m.getNode(e.getNode1()-1);
+            node n2 = m.getNode(e.getNode2()-1);
+            node n3 = m.getNode(e.getNode3()-1);
+            node n4 = m.getNode(e.getNode4()-1);
+            
+        }
         Matrix<float> createLocalK(int element,ref mesh m){
             // K = (k*Ve/D^2)Bt*At*A*B := K_4x4
             math_tools mtools=new math_tools();
-            float D,Ve,k = m.getParameter(0);
-            Matrix<float> K = null,Bt = null,At = null;
-            var A=Matrix<float>.Build.Dense(3,3,0);
-            var B=Matrix<float>.Build.Dense(3,4,0);
-           D = calculateLocalD(element,m);
-            Ve = calculateLocalVolume(element,m);
-
-           
+               float D,Ve,k = m.getParameter(0);
+              Matrix<float> K = null,Bt = null,At = null;
+             var A=Matrix<float>.Build.Dense(3,3,0);
+              var B=Matrix<float>.Build.Dense(3,4,0);
+             D = calculateLocalD(element,m);
+              Ve = calculateLocalVolume(element,m);
+             
+            
+              calculateLocalA(element,ref A,m);
+              calculateB(ref B);
+              At = A.Transpose();
+              Bt = B.Transpose();
           
-            calculateLocalA(element,ref A,m);
-            calculateB(ref B);
-            At = A.Transpose();
-            Bt = B.Transpose();
+          
+  
+             mtools.productRealMatrix(k*Ve/(D*D),mtools.productMatrixMatrix(Bt,mtools.productMatrixMatrix(At,mtools.productMatrixMatrix(A,B,3,3,4),3,3,4),4,3,4),ref K);
+      
         
-        
-
-            mtools.productRealMatrix(k*Ve/(D*D),mtools.productMatrixMatrix(Bt,mtools.productMatrixMatrix(At,mtools.productMatrixMatrix(A,B,3,3,4),3,3,4),4,3,4),ref K);
-
+         
             return K;
         }
         public Vector<float> createLocalb(int element,ref mesh m){
@@ -149,13 +161,14 @@ namespace Poliglot
                assemblyK(e,  localKs[i],ref K);
                 assemblyb(e, localbs[i],ref b);
             }
+     
         }
         void assemblyK(element e, Matrix<float> localK,ref Matrix<float> K){
             int index1 = e.getNode1() - 1;
             int index2 = e.getNode2() - 1;
             int index3 = e.getNode3() - 1;
             int index4 = e.getNode4() - 1;
-     
+    
             K[index1,index1] += localK[0,0];
             K[index1,index2] += localK[0,1];
             K[index1,index3] += localK[0,2];
@@ -188,7 +201,7 @@ namespace Poliglot
             b[index2] += localb[1];
             b[index3] += localb[2];
             b[index4] += localb[3];
-    
+ 
         }
         public void applyNeumann(ref mesh m,ref Vector<float> b){
             for(int i=0;i<m.getSize(3);i++){
@@ -292,13 +305,57 @@ namespace Poliglot
             math_tools mtools= new math_tools();
             Console.WriteLine("Iniciando calculo de respuesta...");
            
-            Matrix<float> Kinv = null;
+            Matrix<float> Kinv = Matrix<float>.Build.Dense(16,16,0);
             Console.WriteLine("Calculo de inversa...");
-
-            Kinv = K.Inverse();
+            mtools.transpose(K,ref Kinv);
+          //  Kinv = K.Inverse();
             Console.WriteLine("Calculo de respuesta...");
-           
+            Console.WriteLine("K original");
+            for (int j = 0; j < K.RowCount; j++)
+            {        for (int l = 0; l < K.ColumnCount; l++)
+                {
+                    
+                    Console.Write(K[j,l] + " ");
+                
+
+              
+
+                } 
+                    
+                Console.WriteLine();
+                
+
+              
+
+            } 
+            Console.WriteLine("Inversa");
+            for (int j = 0; j < Kinv.RowCount; j++)
+            {        for (int l = 0; l < Kinv.ColumnCount; l++)
+                {
+                    
+                    Console.Write(Kinv[j,l] + " ");
+                
+
+              
+
+                } 
+                    
+                Console.WriteLine();
+                
+
+              
+
+            } 
             mtools.productMatrixVector(Kinv,b,ref T);
+            Console.WriteLine("Respuesta");
+            for (int j = 0; j < T.Count; j++) {
+
+
+                Console.WriteLine(T.At(j));
+
+            }
+         
+            
         }
 
     }
