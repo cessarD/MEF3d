@@ -47,9 +47,9 @@ namespace Poliglot
             return member;
         }
         public Matrix<float> productMatrixMatrix(Matrix<float> A,Matrix<float> B,int n,int r,int m){
-            Matrix<float> R = null;
+            Matrix<float> R = Matrix<float>.Build.Dense(n,m,0);
 
-            zeroes(ref R,n,m);
+          //  zeroes(ref R,n,m);
             for(int i=0;i<n;i++)
             for(int j=0;j<m;j++)
                 R[i,j] = calculateMember(i,j,r,A,B);
@@ -57,7 +57,8 @@ namespace Poliglot
             return R;
         }
         public void productRealMatrix(float real,Matrix<float> M,ref Matrix<float> R){
-            zeroesm(ref R,M.RowCount);
+            R = Matrix<float>.Build.Dense(M.RowCount,M.RowCount,0);
+            //zeroesm(ref R,M.RowCount);
             for(int i=0;i<M.RowCount;i++)
             for(int j=0;j<M.ColumnCount;j++)
                 R[i,j] = real*M[i,j];

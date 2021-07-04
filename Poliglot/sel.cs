@@ -10,11 +10,11 @@ namespace Poliglot
         public void crearSistemasLocales(ref mesh m,ref Matrix<float>[] localKs,ref Vector<float>[] localbs)
         {
            
-             for(int i=0;i<m.getSize(1);i++)
+             for(int i=0;i<m.getSize(1)-1;i++)
              {
                
-                   // localKs[i]=createLocalK(i,ref m);
-                 // localbs[i]=createLocalb(i,ref m);
+                    localKs[i]=createLocalK(i,ref m);
+                  localbs[i]=createLocalb(i,ref m);
              }
         }
         float calculateLocalD(int ind,mesh m){
@@ -90,24 +90,27 @@ namespace Poliglot
             // K = (k*Ve/D^2)Bt*At*A*B := K_4x4
             math_tools mtools=new math_tools();
             float D,Ve,k = m.getParameter(0);
-            Matrix<float> K = null,A = null,B = null,Bt = null,At = null;
-
+            Matrix<float> K = null,Bt = null,At = null;
+            var A=Matrix<float>.Build.Dense(3,3,0);
+            var B=Matrix<float>.Build.Dense(3,4,0);
             D = calculateLocalD(element,m);
             Ve = calculateLocalVolume(element,m);
 
-            mtools.zeroesm(ref A,3);
-            mtools.zeroes(ref B,3,4);
+           
+          
             calculateLocalA(element,ref A,m);
             calculateB(ref B);
-            mtools.transpose(A,ref At);
-            mtools.transpose(B,ref Bt);
+            At = A.Transpose();
+            Bt = B.Transpose();
+        
+        
 
             mtools.productRealMatrix(k*Ve/(D*D),mtools.productMatrixMatrix(Bt,mtools.productMatrixMatrix(At,mtools.productMatrixMatrix(A,B,3,3,4),3,3,4),4,3,4),ref K);
 
             return K;
         }
         public Vector<float> createLocalb(int element,ref mesh m){
-            Vector<float> b = null;
+            Vector<float> b = Vector<float>.Build.Dense(4,0);;
 
             float Q = m.getParameter(1),J,b_i;
             J = calculateLocalJ(element,ref m);
@@ -141,9 +144,9 @@ namespace Poliglot
         }
         
         public void ensamblaje(ref mesh m, ref Matrix<float>[] localKs, ref Vector<float>[] localbs,ref Matrix<float> K,ref Vector<float> b){
-            for(int i=0;i<m.getSize(1);i++){
+            for(int i=0;i<m.getSize(1)-1;i++){
                 element e = m.getElement(i);
-                assemblyK(e,  localKs[i],ref K);
+               assemblyK(e,  localKs[i],ref K);
                 assemblyb(e, localbs[i],ref b);
             }
         }
@@ -152,7 +155,7 @@ namespace Poliglot
             int index2 = e.getNode2() - 1;
             int index3 = e.getNode3() - 1;
             int index4 = e.getNode4() - 1;
-
+            Console.WriteLine(index1+" "+ index2 + " "+ index3 + " "+ index4);
             K[index1,index1] += localK[0,0];
             K[index1,index2] += localK[0,1];
             K[index1,index3] += localK[0,2];
@@ -188,7 +191,7 @@ namespace Poliglot
     
         }
         public void applyNeumann(ref mesh m,ref Vector<float> b){
-            for(int i=0;i<m.getSize(3);i++){
+            for(int i=0;i<m.getSize(3)-1;i++){
                 condition c = m.getCondition(i,3);
                 b[c.getNode1()-1] += c.getValue();
             }
