@@ -10,10 +10,10 @@ namespace Poliglot
 
         public void crearSistemasLocales(ref mesh m,ref Matrix<float>[] localKs,ref Vector<float>[] localbs)
         {
-           
-             for(int i=0;i<m.getSize(1)-1;i++)
+            var t = m.getSize(1);
+             for(int i=0;i<t-1;i++)
              {
-               
+         
                    localKs[i]=createLocalK(i,ref m);
                   localbs[i]=createLocalb(i,ref m);
              }
