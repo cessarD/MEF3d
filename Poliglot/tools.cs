@@ -26,8 +26,8 @@ namespace Poliglot
         
         public void ReadMeshandConditions( ref mesh m, string filename)
         {
-            float k, q;
-            int nnodes, neltos, ndirich, nneuman;
+            float k,fx,fy,fz;
+            int nnodes, neltos, ndirichx,ndirichy,ndirichz, nneuman;
 
             if (!File.Exists(filename))
             {
@@ -37,7 +37,7 @@ namespace Poliglot
 
             FileStream data = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
             StreamReader reader = new StreamReader(data);
-
+         
             string[] lines;
             string line;
 
@@ -45,10 +45,14 @@ namespace Poliglot
             line = reader.ReadLine();
             lines = line.Split(' ');
 
-            
+         
             k = float.Parse(lines[0]);
-            q = float.Parse(lines[1]);
-            Console.WriteLine("k=" + k + "q=" + q);
+            fx = float.Parse(lines[1]);
+            
+            fy = float.Parse(lines[2]);
+            fz = float.Parse(lines[3]);
+          
+            Console.WriteLine("k=" + k + "q=" + fx);
 
             //salto
             line = reader.ReadLine();
@@ -56,12 +60,14 @@ namespace Poliglot
             //declarando variables
             nnodes = int.Parse(lines[0]);
             neltos = int.Parse(lines[1]);
-            ndirich = int.Parse(lines[2]);
-            nneuman = int.Parse(lines[3]);
-            Console.WriteLine("nodos = " + nnodes + "\nElementos = " + neltos + "\nCondiciones de Dirichlet = " + ndirich + "\nCondiciones de Nneuman = " + nneuman + "\n\n");
+            ndirichx = int.Parse(lines[2]);
+            ndirichy = int.Parse(lines[3]);
+            ndirichz = int.Parse(lines[4]);
+            nneuman = int.Parse(lines[5]);
+            Console.WriteLine("nodos = " + nnodes + "\nElementos = " + neltos + "\nCondiciones de Dirichlet = " + ndirichx + "\nCondiciones de Nneuman = " + nneuman + "\n\n");
 
-            m.setParameters(k, q);
-            m.setSizes(nnodes,neltos,ndirich, nneuman);
+            m.setParameters(k, fx,fy,fz);
+            m.setSizes(nnodes,neltos,ndirichx,ndirichy,ndirichz, nneuman);
             m.createData();
 
 
@@ -78,13 +84,13 @@ namespace Poliglot
             node[] n = m.getNodes();
             for (int i = 0; i < nnodes; i++) {
                 line = reader.ReadLine();
-                
-                line = line.Replace("           ","");
-                line = line.Replace("          ","");
-                line = line.Replace("         ","");
-                line = line.Replace("        ","");
-                line = line.Replace("       "," ");
                
+                while (line.Split(' ').Length > 4)
+                {
+                    line = line.Replace("  "," ");
+                   
+                }
+          
                 lines = line.Split(' ');
     
                 node nnode = new node();
@@ -116,18 +122,19 @@ namespace Poliglot
             line = reader.ReadLine();
             line = reader.ReadLine();
             line = reader.ReadLine();
-            Console.WriteLine("PRE DIR");
+            Console.WriteLine("PRE DIRx");
             //seting elements
-            condition[] DIR = m.getDirichlet();
-            for (int i = 0; i < ndirich; i++) {
+            condition[] DIR = m.getDirichletx();
+            for (int i = 0; i < ndirichx; i++) {
                 line = reader.ReadLine();
 
-                line = line.Replace("          ", "");
-                line = line.Replace("         ","");
-                line = line.Replace("        ","");
-                line = line.Replace("       "," ");
+                while (line.Split(' ').Length > 2)
+                {
+                    line = line.Replace("  "," ");
+                   
+                }
 
-             
+   
                 lines = line.Split(' ');
     
                 condition element = new condition();
@@ -139,16 +146,65 @@ namespace Poliglot
             line = reader.ReadLine();
             line = reader.ReadLine();
             line = reader.ReadLine();
+            Console.WriteLine("PRE DIRy");
+            //seting elements
+            condition[] DIRy = m.getDirichlety();
+            for (int i = 0; i < ndirichy; i++) {
+                line = reader.ReadLine();
+
+                while (line.Split(' ').Length > 2)
+                {
+                    line = line.Replace("  "," ");
+                   
+                }
+
+             
+                lines = line.Split(' ');
+    
+                condition element = new condition();
+                DIRy[i] = element;
+        
+                DIRy[i].setValues(0 ,0,0,0,int.Parse(lines[0].ToString()),0,0,0,int.Parse(lines[1].ToString()));
+
+            }
+            
+            line = reader.ReadLine();
+            line = reader.ReadLine();
+            line = reader.ReadLine();
+            Console.WriteLine("PRE DIRz");
+            //seting elements
+            condition[] DIRz = m.getDirichletz();
+            for (int i = 0; i < ndirichz; i++) {
+                line = reader.ReadLine();
+
+                while (line.Split(' ').Length > 2)
+                {
+                    line = line.Replace("  "," ");
+                   
+                }
+
+             
+                lines = line.Split(' ');
+    
+                condition element = new condition();
+                DIRz[i] = element;
+        
+                DIRz[i].setValues(0 ,0,0,0,int.Parse(lines[0].ToString()),0,0,0,int.Parse(lines[1].ToString()));
+
+            }
+            line = reader.ReadLine();
+            line = reader.ReadLine();
+            line = reader.ReadLine();
             Console.WriteLine("PRE NEU");
             //seting elements
             condition[] NEU = m.getNeumann();
             for (int i = 0; i < nneuman; i++) {
                 line = reader.ReadLine();
-                line = line.Replace("           ", "");
-                line = line.Replace("          ", "");
-                line = line.Replace("         ","");
-                line = line.Replace("        ","");
-                line = line.Replace("       "," ");
+                while (line.Split(' ').Length > 2)
+                {
+                    line = line.Replace("  "," ");
+                   
+                }
 
          
                 lines = line.Split(' ');

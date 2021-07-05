@@ -158,29 +158,35 @@ namespace Poliglot
 
     unsafe public class mesh
     {
-        float[] parameters = new float[2];
-        int[] sizes = new int[4];
+        float[] parameters = new float[4];
+        int[] sizes = new int[6];
 
         unsafe node[] node_list;
         unsafe element[] element_list;
         unsafe int[] indices_dirich;
-        unsafe condition[] dirichlet_list;
+        unsafe condition[] dirichletx_list;
+        unsafe condition[] dirichlety_list;
+        unsafe condition[] dirichletz_list;
         unsafe condition[] neumann_list;
 
 
 
-        public void setParameters(float k, float Q)
+        public void setParameters(float k, float fx,float fy,float fz)
         {
             parameters[0] = k;
-            parameters[1] = Q;
+            parameters[1] = fx;
+            parameters[2] = fy;
+            parameters[3] = fz;
 
         }
-        public void setSizes(int nnodes, int neltos, int ndirich, int nneu)
+        public void setSizes(int nnodes, int neltos, int ndirichx,int ndirichy,int ndirichz, int nneu)
         {
             sizes[0] = nnodes;
             sizes[1] = neltos;
-            sizes[2] = ndirich;
-            sizes[3] = nneu;
+            sizes[2] = ndirichx;
+            sizes[3] = ndirichy;
+            sizes[4] = ndirichz;
+            sizes[5] = nneu;
 
         }
         public int getSize(int s)
@@ -196,8 +202,10 @@ namespace Poliglot
             node_list = new node[sizes[0]];
             element_list = new element[sizes[1]];
             indices_dirich = new int[2];
-            dirichlet_list = new condition[sizes[2]];
-            neumann_list = new condition[sizes[3]];
+            dirichletx_list = new condition[sizes[2]];
+            dirichlety_list = new condition[sizes[3]];
+            dirichletz_list = new condition[sizes[4]];
+            neumann_list = new condition[sizes[5]];
         }
         public unsafe node[] getNodes()
         {
@@ -211,9 +219,17 @@ namespace Poliglot
         {
             return indices_dirich;
         }
-        public unsafe condition[] getDirichlet()
+        public unsafe condition[] getDirichletx()
         {
-            return dirichlet_list;
+            return dirichletx_list;
+        }
+        public unsafe condition[] getDirichlety()
+        {
+            return dirichlety_list;
+        }
+        public unsafe condition[] getDirichletz()
+        {
+            return dirichletz_list;
         }
         public unsafe condition[] getNeumann()
         {
@@ -235,8 +251,10 @@ namespace Poliglot
         }
         public unsafe condition getCondition(int i, int type)
         {
-            if (type == 2) return dirichlet_list[i];
-            else return neumann_list[i];
+            if (type == 2) return dirichletx_list[i];
+            else if(type==3)return dirichlety_list[i];
+            else if(type==4)return dirichletz_list[i];
+                else return neumann_list[i];
         }
     };
 

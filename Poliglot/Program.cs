@@ -20,8 +20,7 @@ namespace Poliglot
             sel sel = new sel();
             //definiendo nuestros vectores y variables. 
 
-            var Localks = new Matrix<float>[16];
-            var LocalBs = new Vector<float>[16] ;
+           
      
 
             mesh m = new mesh();
@@ -32,6 +31,10 @@ namespace Poliglot
        
             tls.ReadMeshandConditions(ref m, filename);
             Console.WriteLine("m.getsize "+m.getSize(0));
+            var Localks = new Matrix<float>[m.getSize(0)];
+            var LocalBs = new Vector<float>[m.getSize(0)] ;
+
+            Console.WriteLine(Localks.Length);
             sel.crearSistemasLocales(ref m, ref Localks, ref LocalBs);
             Matrix<float> K = Matrix<float>.Build.Dense(16,16,0);
             Vector<float> B= Vector<float>.Build.Dense(16,0);
