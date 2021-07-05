@@ -36,14 +36,35 @@ namespace Poliglot
             //finales
             //creando u
             Matrix<float> U = Matrix<float>.Build.Dense(10, 10, 0);
-            U.Determinant();
+            U = sel.calculateU(1, m,0, ref U);
+            Console.WriteLine("Post U");
+            for (int j = 0; j < U.RowCount; j++)
+            {
+                for (int l = 0; l < U.ColumnCount; l++)
+                {   
+
+                    Console.Write(U[j, l] + " ");
 
 
 
-            
+
+                }
+
+                Console.WriteLine();
 
 
-           Matrix<float> K = Matrix<float>.Build.Dense(16,16,0);
+
+
+            }
+
+
+
+
+
+
+
+
+            Matrix<float> K = Matrix<float>.Build.Dense(30,30,0);
             Vector<float> B= Vector<float>.Build.Dense(16,0);
            // Vector<float> T = null;
             //mtools.zeroesm(ref K,m.getSize(0));

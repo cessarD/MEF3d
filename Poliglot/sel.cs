@@ -88,17 +88,7 @@ namespace Poliglot
             B[2,0] = -1; B[2,1] = 0; B[2,2] = 0; B[2,3] = 1;
         }
 
-        void calculateU(int i,mesh m,int j, ref Matrix<float> U)
-        {
-            element e = m.getElement(i);
-            node n1 = m.getNode(e.getNode1()-1);
-            node n2 = m.getNode(e.getNode2()-1);
-            node n3 = m.getNode(e.getNode3()-1);
-            node n4 = m.getNode(e.getNode4()-1);
-
-            
-        }
-
+     
         float calculatec1(element n, mesh m)
         {
             node n1 = m.getNode(n.getNode1() - 1);
@@ -114,8 +104,107 @@ namespace Poliglot
             node n2 = m.getNode(n.getNode2() - 1);
             node n3 = m.getNode(n.getNode3() - 1);
             node n4 = m.getNode(n.getNode4() - 1);
-            //seria X8 pero no se de donde sale
+
+
             return (1 / n2.getX() - n1.getX()) * ((4 * n1.getX()) + (4 * n2.getX()) - (8 * n3.getX()));
+        }
+        float calculatecE(element n, mesh m)
+        {
+            node n1 = m.getNode(n.getNode1() - 1);
+            node n2 = m.getNode(n.getNode2() - 1);
+            node n3 = m.getNode(n.getNode3() - 1);
+            node n4 = m.getNode(n.getNode4() - 1);
+            float c1 = calculatec1(n, m);
+            float c2 = calculatec2(n, m);
+
+            return ((float)Math.Pow(c1, 2) * 8 / 3) + ((float)Math.Pow(c2, 2) * 1 / 30);
+        }
+        float calculatecI(element n, mesh m)
+        {
+            node n1 = m.getNode(n.getNode1() - 1);
+            node n2 = m.getNode(n.getNode2() - 1);
+            node n3 = m.getNode(n.getNode3() - 1);
+            node n4 = m.getNode(n.getNode4() - 1);
+            float c1 = calculatec1(n, m);
+            float c2 = calculatec2(n, m);
+
+            return ((float)Math.Pow(c1, 2) * -16 / 3) - ((float)Math.Pow(c2, 2) * 2 / 3);
+        }
+        float calculatecJ(element n, mesh m)
+        {
+            node n1 = m.getNode(n.getNode1() - 1);
+            node n2 = m.getNode(n.getNode2() - 1);
+            node n3 = m.getNode(n.getNode3() - 1);
+            node n4 = m.getNode(n.getNode4() - 1);
+            float c1 = calculatec1(n, m);
+            float c2 = calculatec2(n, m);
+
+            return ((float)Math.Pow(c2, 2) * 2 / 15);
+        }
+        public Matrix<float> calculateU(int i, mesh m, int j, ref Matrix<float> U)
+        {
+            element e = m.getElement(i);
+            node n1 = m.getNode(e.getNode1() - 1);
+            node n2 = m.getNode(e.getNode2() - 1);
+            node n3 = m.getNode(e.getNode3() - 1);
+            node n4 = m.getNode(e.getNode4() - 1);
+
+            float c1 = 0;
+            float c2 = 0;
+            //trabajar con X
+            if (j == 0)
+            {
+                c1 = 1 / calculatec1(e, m); 
+                c2 = calculatec2(e, m);
+            }
+            else if (j == 1)
+            //trabajar con Y
+            {
+
+            }
+            else if (j == 2)
+            {
+                //trabajar con Z
+
+            }
+
+            float A = (((float)Math.Pow(c2, 2) * -1 / 192) * (float)Math.Pow(4 * c1 - c2, 4)) -
+                      ((c2 * 1 / 24) * (float)Math.Pow(4 * c1 - c2, 3)) -
+                      (((float)Math.Pow(c2, 3) * 1 / 3840) * (float)Math.Pow(4 * c1 - c2, 5)) +
+                      (((float)Math.Pow(c2, 3) * 1 / 3840) * (float)Math.Pow(4 * c1 + 3 * c2, 5));
+            float B = (((float)Math.Pow(c2, 2) * -1 / 192) * (float)Math.Pow(4 * c1 + c2, 4)) +
+                      ((c2 * 1 / 24) * (float)Math.Pow(4 * c1 + c2, 3)) +
+                      (((float)Math.Pow(c2, 3) * 1 / 3840) * (float)Math.Pow(4 * c1 + c2, 5)) -
+                      (((float)Math.Pow(c2, 3) * 1 / 3840) * (float)Math.Pow(4 * c1 - 3 * c2, 5));
+            float C = (float)Math.Pow(c2, 2) * 4 / 15;
+            float D = (((float)Math.Pow(c2, 2) * 1 / 192) * (float)Math.Pow(4 * c2 - c1, 4)) -
+                      (((float)Math.Pow(c2, 3) * 1 / 3840) * (float)Math.Pow(4 * c2 - c1, 5)) +
+                      (((float)Math.Pow(c2, 3) * 1 / 7680) * (float)Math.Pow(4 * c2 + 8 * c1, 5)) -
+                      (((float)Math.Pow(c2, 3) * 7 / 7680) * (float)Math.Pow(4 * c2 - 8 * c1, 5)) +
+                      (((float)Math.Pow(c2, 3) * 7 / 768) * (float)Math.Pow(-8 * c1, 5)) -
+                      ((c1 / 96 * (float)Math.Pow(c2, 3)) * (float)Math.Pow(4 * c2 - 8 * c1, 4)) +
+                      (((2 * c1 - 1) / 192 * (float)Math.Pow(c2, 3)) * (float)Math.Pow(-8 * c1, 4));
+            float E = ((float)Math.Pow(c1, 2) * 8 / 3) + ((float)Math.Pow(c2, 2) * 1 / 30);
+            float F = c1 * c2 * 2 / 3 - (float)Math.Pow(c2, 2) * 1 / 30;
+            float G = ((float)Math.Pow(c1, 2) * -16 / 3) - (c2 * c1 * 4 / 3) - ((float)Math.Pow(c2, 2) * 2 / 15);
+            float H = (c1 * c2 * 2 / 3) + ((float)Math.Pow(c2, 2) * 1 / 30);
+            float I = ((float)Math.Pow(c1, 2) * -16 / 3) - ((float)Math.Pow(c2, 2) * 2 / 3);
+            float J = ((float)Math.Pow(c2, 2) * 2 / 15);
+            float K = (c1 * c2 * -4 / 3);
+            U[0, 0] = A; U[0, 1] = E; U[0, 2] = 0; U[0, 3] = 0; U[0, 4] = -F; U[0, 5] = 0; U[0, 6] = -F; U[0, 7] = G; U[0, 8] = F; U[0, 9] = F;
+            U[1, 0] = E; U[1, 1] = B; U[1, 2] = 0; U[1, 3] = 0; U[1, 4] = -H; U[1, 5] = 0; U[1, 6] = -H; U[1, 7] = I; U[1, 8] = H; U[1, 9] = H;
+            //fila 2 y 3 en teoria ya estan llenas de cero
+            U[4, 0] = -F; U[4, 1] = -H; U[4, 2] = 0; U[4, 3] = 0; U[4, 4] = C; U[4, 5] = 0; U[4, 6] = J; U[4, 7] = -K; U[4, 8] = -C; U[4, 9] = -J;
+            //fila 5 en teoria ya estan llenas de cero
+            U[6, 0] = -F; U[6, 1] = -H; U[6, 2] = 0; U[6, 3] = 0; U[6, 4] = J; U[6, 5] = 0; U[6, 6] = C; U[6, 7] = -K; U[6, 8] = -J; U[6, 9] = -C;
+
+            U[7, 0] = G; U[7, 1] = I; U[7, 2] = 0; U[7, 3] = 0; U[7, 4] = -K; U[7, 5] = 0; U[7, 6] = -K; U[7, 7] = D; U[7, 8] = K; U[7, 9] = K;
+            U[8, 0] = F; U[8, 1] = H; U[8, 2] = 0; U[8, 3] = 0; U[8, 4] = -C; U[8, 5] = 0; U[8, 6] = -J; U[8, 7] = K; U[8, 8] = C; U[8, 9] = J;
+            U[9, 0] = F; U[9, 1] = H; U[9, 2] = 0; U[9, 3] = 0; U[9, 4] = -J; U[9, 5] = 0; U[9, 6] = -C; U[9, 7] = K; U[9, 8] = J; U[9, 9] = C;
+
+
+
+            return U;
         }
         Matrix<float> createLocalK(int element,ref mesh m){
             // K = (k*Ve/D^2)Bt*At*A*B := K_4x4
@@ -193,58 +282,66 @@ namespace Poliglot
             int index2 = e.getNode2() - 1;
             int index3 = e.getNode3() - 1;
             int index4 = e.getNode4() - 1;
-    
-            K[index1,index1] += localK[0,0];
-            K[index1,index2] += localK[0,1];
-            K[index1,index3] += localK[0,2];
-            K[index1,index4] += localK[0,3];
-           
-            K[index2,index1] += localK[1,0];
-            K[index2,index2] += localK[1,1];
-            K[index2,index3] += localK[1,2];
-            K[index2,index4] += localK[1,3];
-            
-            K[index3,index1] += localK[2,0];
-            K[index3,index2] += localK[2,1];
-            K[index3,index3] += localK[2,2];
-            K[index3,index4] += localK[2,3];
-    
-            K[index4,index1] += localK[3,0];
-            K[index4,index2] += localK[3,1];
-            K[index4,index3] += localK[3,2];
-            K[index4,index4] += localK[3,3];
-
-            //mult
-            Matrix<float> mult = Matrix<float>.Build.Dense(3, 3, 0);
-            Console.WriteLine("el mult");
-            mult[0, 0] = U.Determinant();
-            mult[1, 1] = U.Determinant();
-            mult[2, 2] = U.Determinant();
 
 
-            Console.WriteLine(mult);
+            //9,9
+            //18,18
+            //27,27
+            int o = 0;
+            int h = 0;
 
-            for (int j = 0; j < U.RowCount; j++)
-            {
-                for (int l = 0; l <U.ColumnCount; l++)
+
+            for (int i=0; i<10;i++) {
+                for(int j = 0; j < 10; j++)
                 {
-
-                    Console.Write(U[j, l] + " ");
-
-
-
-
+                    K[i, j] = U[i, j];
+                    //Console.WriteLine( U[i, j] + " " + i+ " " + j + " K " + i + " " + j);
                 }
-
-                Console.WriteLine();
-
-
-
-
             }
+            for (int i = 10; i < 19; i++)
+            {
+                for (int j = 10; j < 19; j++)
+                {
+                    K[i, j] = U[h, o];
+                    //Console.WriteLine(U[o, h] + " " + o + " " + h + " K " + i + " " + j);
+                    o++;
+                }
+                h++;
+                o = 0;
+            }
+            h = 0;
+            o = 0;
+            for (int i = 19; i < 28; i++)
+            {
+                for (int j = 19; j < 28; j++)
+                {
+                    K[i, j] = U[h, o];
+                    //Console.WriteLine( U[o, h] + " " + o + " " + h + " K " + i + " " + j);
+                    o++;
+                }
+                h++;
+                o = 0;
+            }
+
+
+
 
         }
 
+        Boolean conditionforK(int x, int y) {
+            if (x < 10 && y < 10) {
+                return true;
+            } else if (x >= 10 && x < 19 && y >= 10 && y < 19) {
+                return true;
+            } else if (x>=19 && x<28 && y>=19 && y<28) {
+                return true;
+            }
+
+
+
+
+            return false;
+        }
         void assemblyb(element e,Vector<float> localb,ref Vector<float> b){
             int index1 = e.getNode1() - 1;
             int index2 = e.getNode2() - 1;
@@ -260,10 +357,12 @@ namespace Poliglot
         public void applyNeumann(ref mesh m,ref Vector<float> b){
             for(int i=0;i<m.getSize(3);i++){
                 condition c = m.getCondition(i,3);
-              
+                
                 b[c.getNode1()-1] += c.getValue();
             }
         }
+
+
         public void applyDirichlet(ref mesh m,ref Matrix<float> K,ref Vector<float> b){
             for(int i=0;i<m.getSize(2);i++){
                 condition c = m.getCondition(i,2);
@@ -276,6 +375,7 @@ namespace Poliglot
                 for(int row=0;row<K.RowCount;row++){
                     float cell = K[row,index];
              
+                    
                     b[row] += -1*c.getValue()*cell;
                 }
                 K.RemoveColumn(index);
