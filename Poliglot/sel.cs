@@ -13,7 +13,7 @@ namespace Poliglot
             var t = m.getSize(1);
              for(int i=0;i<t-1;i++)
              {
-             Console.WriteLine(i);
+         
                    localKs[i]=createLocalK(i,ref m);
                   localbs[i]=createLocalb(i,ref m);
              }

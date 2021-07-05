@@ -11,8 +11,8 @@ namespace Poliglot
 {
     internal class Program
     {
-        private const string filename = @"C:\Users\Rene\Documents\GitHub\MEF3d\Poliglot\3dtest.dat";
-        //private const string filename = @"C:\Users\cesar\RiderProjects\MEF3d\Poliglot\3dtest.dat";
+        //private const string filename = @"C:\Users\Rene\Documents\GitHub\MEF3d\Poliglot\3dtest.dat";
+        private const string filename = @"C:\Users\cesar\RiderProjects\MEF3d\Poliglot\3dtest.dat";
         public static void Main(string[] args)
         {
             tools tls = new tools();
@@ -31,8 +31,8 @@ namespace Poliglot
        
             tls.ReadMeshandConditions(ref m, filename);
             Console.WriteLine("m.getsize "+m.getSize(0));
-            var Localks = new Matrix<float>[m.getSize(0)];
-            var LocalBs = new Vector<float>[m.getSize(0)] ;
+            var Localks = new Matrix<float>[m.getSize(1)];
+            var LocalBs = new Vector<float>[m.getSize(1)] ;
 
             Console.WriteLine(Localks.Length);
             sel.crearSistemasLocales(ref m, ref Localks, ref LocalBs);
