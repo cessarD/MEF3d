@@ -11,8 +11,8 @@ namespace Poliglot
 {
     internal class Program
     {
-        //private const string filename = @"C:\Users\Rene\Documents\GitHub\MEF3d\Poliglot\3dtest.dat";
-        private const string filename = @"C:\Users\cesar\RiderProjects\MEF3d\Poliglot\3dtest.dat";
+        private const string filename = @"C:\Users\Rene\Documents\GitHub\MEF3d\Poliglot\3dtest.dat";
+        //private const string filename = @"C:\Users\cesar\RiderProjects\MEF3d\Poliglot\3dtest.dat";
         public static void Main(string[] args)
         {
             tools tls = new tools();

@@ -130,17 +130,7 @@ namespace Poliglot
 
             return ((float)Math.Pow(c1, 2) * -16 / 3) - ((float)Math.Pow(c2, 2) * 2 / 3);
         }
-        float calculatecJ(element n, mesh m)
-        {
-            node n1 = m.getNode(n.getNode1() - 1);
-            node n2 = m.getNode(n.getNode2() - 1);
-            node n3 = m.getNode(n.getNode3() - 1);
-            node n4 = m.getNode(n.getNode4() - 1);
-            float c1 = calculatec1(n, m);
-            float c2 = calculatec2(n, m);
 
-            return ((float)Math.Pow(c2, 2) * 2 / 15);
-        }
         public Matrix<float> calculateU(int i, mesh m, int j, ref Matrix<float> U)
         {
             element e = m.getElement(i);
@@ -271,17 +261,19 @@ namespace Poliglot
         public void ensamblaje(ref mesh m, ref Matrix<float>[] localKs, ref Vector<float>[] localbs,ref Matrix<float> K,ref Vector<float> b, ref Matrix<float> U){
             for(int i=0;i<m.getSize(1)-1;i++){
                 element e = m.getElement(i);
+                
                 assemblyK(e,  localKs[i],ref K, ref U);
                 assemblyb(e, localbs[i],ref b);
             }
      
         }
-        void assemblyK(element e, Matrix<float> localK,ref Matrix<float> K, ref Matrix<float> U)
+        void assemblyK(element e, Matrix<float> localK, ref Matrix<float> K, ref Matrix<float> U)
         {
             int index1 = e.getNode1() - 1;
             int index2 = e.getNode2() - 1;
             int index3 = e.getNode3() - 1;
             int index4 = e.getNode4() - 1;
+
 
 
             //9,9
@@ -323,10 +315,21 @@ namespace Poliglot
                 o = 0;
             }
 
+            float mult = U[0, 1] * U[7, 1];
 
-
+            for (int i = 0; i < 30; i++)
+            {
+                for (int j = 0; j < 30; j++)
+                {
+                    K[i, j] = K[i, j];
+                    
+                }
+            }
 
         }
+
+
+
 
         Boolean conditionforK(int x, int y) {
             if (x < 10 && y < 10) {
