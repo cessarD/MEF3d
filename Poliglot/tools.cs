@@ -26,7 +26,8 @@ namespace Poliglot
         
         public void ReadMeshandConditions( ref mesh m, string filename)
         {
-            float k,fx,fy,fz;
+            //declarando variables
+            float ei,fx,fy,fz;
             int nnodes, neltos, ndirichx,ndirichy,ndirichz, nneuman;
 
             if (!File.Exists(filename))
@@ -41,23 +42,22 @@ namespace Poliglot
             string[] lines;
             string line;
 
-            //reading a line;
+        
             line = reader.ReadLine();
             lines = line.Split(' ');
 
-         
-            k = float.Parse(lines[0]);
+            //Guardando parametros iniciales
+            ei = float.Parse(lines[0]);
             fx = float.Parse(lines[1]);
             
             fy = float.Parse(lines[2]);
             fz = float.Parse(lines[3]);
           
-            Console.WriteLine("k=" + k + "q=" + fx);
+            Console.WriteLine("ei=" + ei + "fx=" + fx);
 
-            //salto
             line = reader.ReadLine();
             lines = line.Split(' ');
-            //declarando variables
+            //Guardando cantidades
             nnodes = int.Parse(lines[0]);
             neltos = int.Parse(lines[1]);
             ndirichx = int.Parse(lines[2]);
@@ -66,21 +66,21 @@ namespace Poliglot
             nneuman = int.Parse(lines[5]);
             Console.WriteLine("nodos = " + nnodes + "\nElementos = " + neltos + "\nCondiciones de Dirichlet = " + ndirichx + "\nCondiciones de Nneuman = " + nneuman + "\n\n");
 
-            m.setParameters(k, fx,fy,fz);
+            m.setParameters(ei, fx,fy,fz);
             m.setSizes(nnodes,neltos,ndirichx,ndirichy,ndirichz, nneuman);
             m.createData();
 
 
-            //salto doble
+          
             line = reader.ReadLine();
            
             line = reader.ReadLine();
             
          
-            Console.WriteLine("PRE NODE");
+            Console.WriteLine("Guardando Nodos");
       
             
-            //seting nodes
+            //Guardando nodos en la malla
             node[] n = m.getNodes();
             for (int i = 0; i < nnodes; i++) {
                 line = reader.ReadLine();
@@ -102,8 +102,8 @@ namespace Poliglot
             line = reader.ReadLine();
             line = reader.ReadLine();
             line = reader.ReadLine();
-            Console.WriteLine("PRE Element");
-            //seting elements
+            Console.WriteLine("Guardando elementos");
+            //Guardando Elementos en la malla
             element[] e = m.getElements();
             for (int i = 0; i < neltos; i++) {
                 line = reader.ReadLine();
@@ -122,8 +122,8 @@ namespace Poliglot
             line = reader.ReadLine();
             line = reader.ReadLine();
             line = reader.ReadLine();
-            Console.WriteLine("PRE DIRx");
-            //seting elements
+            Console.WriteLine("Guardando Condiciones de Dirichlet en vector X");
+            //Guardar en la malla las condiciones de dirichlet
             condition[] DIR = m.getDirichletx();
             for (int i = 0; i < ndirichx; i++) {
                 line = reader.ReadLine();
@@ -146,8 +146,8 @@ namespace Poliglot
             line = reader.ReadLine();
             line = reader.ReadLine();
             line = reader.ReadLine();
-            Console.WriteLine("PRE DIRy");
-            //seting elements
+            Console.WriteLine("Guardando Condiciones de Dirichlet en vector Y");
+            //Guardar en la malla las condiciones de dirichlet
             condition[] DIRy = m.getDirichlety();
             for (int i = 0; i < ndirichy; i++) {
                 line = reader.ReadLine();
@@ -171,8 +171,8 @@ namespace Poliglot
             line = reader.ReadLine();
             line = reader.ReadLine();
             line = reader.ReadLine();
-            Console.WriteLine("PRE DIRz");
-            //seting elements
+            Console.WriteLine("Guardando Condiciones de Dirichlet en vector Z");
+            //Guardar en la malla las condiciones de dirichlet
             condition[] DIRz = m.getDirichletz();
             for (int i = 0; i < ndirichz; i++) {
                 line = reader.ReadLine();
@@ -195,8 +195,8 @@ namespace Poliglot
             line = reader.ReadLine();
             line = reader.ReadLine();
             line = reader.ReadLine();
-            Console.WriteLine("PRE NEU");
-            //seting elements
+            Console.WriteLine("Guardando Condiciones de Neumann");
+            //Guardar en la malla las condiciones de neumann
             condition[] NEU = m.getNeumann();
             for (int i = 0; i < nneuman; i++) {
                 line = reader.ReadLine();
@@ -215,24 +215,7 @@ namespace Poliglot
 
             }
             
-            /*seting values
-  
-            line = reader.ReadLine();
-            Console.WriteLine(line);
-            //hace split cada 12 espacios, a pesar de usar \t
-            lines = line.Split(' ');
-            Console.WriteLine(lines[12]);*/
-
-
-
-
-
-
-
-
-
-
-            //CorrectConditions(ndirich,  m.getDirichlet(), m.getDirichletIndices());
+      
 
         }
     }

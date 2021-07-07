@@ -88,7 +88,7 @@ namespace Poliglot
             B[2,0] = -1; B[2,1] = 0; B[2,2] = 0; B[2,3] = 1;
         }
 
-     
+     //Calculo de factor C1
         float calculatec1(element n, mesh m)
         {
             node n1 = m.getNode(n.getNode1() - 1);
@@ -98,6 +98,8 @@ namespace Poliglot
 
             return (float)Math.Pow(n2.getX() - n1.getX(), 2); ;
         }
+        
+        //Calculo de factor C2
         float calculatec2(element n, mesh m)
         {
             node n1 = m.getNode(n.getNode1() - 1);
@@ -108,6 +110,7 @@ namespace Poliglot
 
             return (1 / n2.getX() - n1.getX()) * ((4 * n1.getX()) + (4 * n2.getX()) - (8 * n3.getX()));
         }
+        /*
         float calculatecE(element n, mesh m)
         {
             node n1 = m.getNode(n.getNode1() - 1);
@@ -130,7 +133,9 @@ namespace Poliglot
 
             return ((float)Math.Pow(c1, 2) * -16 / 3) - ((float)Math.Pow(c2, 2) * 2 / 3);
         }
-
+*/
+        
+        //Calculo de la submatriz U
         public Matrix<float> calculateU(int i, mesh m, int j, ref Matrix<float> U)
         {
             element e = m.getElement(i);
