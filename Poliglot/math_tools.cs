@@ -33,6 +33,7 @@ namespace Poliglot
                 v[i]=0;
             }
         }
+        //TRANPOSE
         public void transpose(Matrix<float> M, ref Matrix<float> T){
             
             zeroes(ref T,M.ColumnCount,M.RowCount);
