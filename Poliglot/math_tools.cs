@@ -27,7 +27,7 @@ namespace Poliglot
 
             }
         }
-
+        //zeroes vector
         public void zeroesv(ref Vector<float> v,int n){
             for(int i=0;i<n;i++){
                 v[i]=0;
