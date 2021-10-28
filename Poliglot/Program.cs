@@ -25,10 +25,10 @@ namespace Poliglot
 
             mesh m = new mesh();
 
-            //leer malla y condiciones.
+            //leer malla y condiciones. x2
            
 
-       
+            
             tls.ReadMeshandConditions(ref m, filename);
             Console.WriteLine("m.getsize "+m.getSize(0));
             var Localks = new Matrix<float>[m.getSize(1)];
