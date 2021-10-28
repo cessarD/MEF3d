@@ -17,7 +17,7 @@ namespace Poliglot
             
        
         }
-
+        //zeroes
         public void zeroes(ref Matrix<float> M,int n,int m){
             for(int i=0;i<n;i++){
                 for(int j=0;j<m;j++){
