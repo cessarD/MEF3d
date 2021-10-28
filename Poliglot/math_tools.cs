@@ -5,7 +5,7 @@ namespace Poliglot
 {
     public class math_tools
     {
-
+        //add zeroes to a matrix mxn
         public void zeroesm(ref Matrix<float> M,int n){
             for(int i=0;i<n;i++){
                 for(int j=0;j<n;j++){
